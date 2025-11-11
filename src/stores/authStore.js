@@ -5,7 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     token: localStorage.getItem('token') || null,
-    isAuthenticated: !!localStorage.getItem('token'),
+    isAuthenticated: false, // Начинаем с false
     errorMessage: ''
   }),
 
@@ -45,38 +45,30 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async getUser() {
-      try {
-        if (!this.token) {
-          throw new Error('Токен отсутствует');
-        }
-
-        const response = await axios.get(
-          `http://localhost:8000/api/user`,
-          {
-            headers: {
-              'Authorization': `Bearer ${this.token}`,
-              'Client-ID': 'TestClient',
-              'Client-Secret': 'test_secret'
+    async checkAuth() {
+      if (this.token) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/api/user`,
+            {
+              headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Client-ID': 'TestClient',
+                'Client-Secret': 'test_secret'
+              }
             }
-          }
-        );
+          );
 
-        if (response.data) {
-          this.user = response.data;
-          return { success: true };
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          this.errorMessage = 'Недействительный токен';
+          if (response.data) {
+            this.user = response.data;
+            this.isAuthenticated = true;
+            return true;
+          }
+        } catch (error) {
           this.logout();
-        } else if (error.response && error.response.data) {
-          this.errorMessage = error.response.data.message || 'Ошибка получения данных пользователя';
-        } else {
-          this.errorMessage = 'Сервер недоступен. Убедитесь, что бэкенд запущен на localhost:8000';
         }
-        return { success: false, error: this.errorMessage };
       }
+      return false;
     },
 
     logout() {
@@ -87,11 +79,5 @@ export const useAuthStore = defineStore('auth', {
 
       localStorage.removeItem('token');
     }
-  },
-
-  getters: {
-    getUserData: (state) => state.user,
-    getAuthStatus: (state) => state.isAuthenticated,
-    getErrorMessage: (state) => state.errorMessage
   }
 });

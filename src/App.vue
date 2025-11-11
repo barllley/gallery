@@ -2,48 +2,23 @@
   <div id="app">
     <header>
       <nav>
-        <!-- Если пользователь аутентифицирован -->
-        <div v-if="isAuthenticated && user">
-          <p>Добро пожаловать, {{ user.name }}!</p>
+        <ul>
+          <li><router-link to="/">Главная</router-link></li>
+          <li><router-link to="/exhibitions">Выставки</router-link></li>
+          <li><router-link to="/tickets">Билеты</router-link></li>
+          <li v-if="!authStore.isAuthenticated"><router-link to="/login">Войти</router-link></li>
+        </ul>
+
+        <div v-if="authStore.isAuthenticated" class="user-info">
+          <span v-if="authStore.user">Добро пожаловать, {{ authStore.user.name }}!</span>
           <button @click="logout">Выйти</button>
-        </div>
-
-        <!-- Если пользователь НЕ аутентифицирован -->
-        <div v-else>
-          <form @submit.prevent="login">
-            <h2>Вход в систему</h2>
-
-            <div>
-              <label for="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                v-model="email"
-                required
-                placeholder="Введите ваш email"
-              >
-            </div>
-
-            <div>
-              <label for="password">Пароль:</label>
-              <input
-                type="password"
-                id="password"
-                v-model="password"
-                required
-                placeholder="Введите ваш пароль"
-              >
-            </div>
-
-            <button type="submit">Войти</button>
-
-            <div v-if="authError" class="error">
-              {{ authError }}
-            </div>
-          </form>
         </div>
       </nav>
     </header>
+
+    <main>
+      <router-view></router-view>
+    </main>
   </div>
 </template>
 
@@ -52,109 +27,74 @@ import { useAuthStore } from '@/stores/authStore';
 
 export default {
   name: 'App',
-
   data() {
     return {
-      email: '',
-      password: '',
       authStore: useAuthStore()
     };
   },
+  async mounted() {
 
-  computed: {
-    isAuthenticated() {
-      return this.authStore.isAuthenticated;
-    },
-
-    user() {
-      return this.authStore.user;
-    },
-
-    authError() {
-      return this.authStore.errorMessage;
-    }
+    await this.authStore.checkAuth();
   },
-
   methods: {
-    async login() {
-      const credentials = {
-        email: this.email,
-        password: this.password
-      };
-
-      await this.authStore.login(credentials);
-
-      this.email = '';
-      this.password = '';
-    },
-
     logout() {
       this.authStore.logout();
-    }
-  },
-
-  mounted() {
-
-    if (this.authStore.token) {
-      this.authStore.isAuthenticated = true;
-
-      this.authStore.getUser();
     }
   }
 };
 </script>
 
 <style>
-.error {
-  color: red;
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid red;
-  border-radius: 4px;
+header {
+  background: #2c3e50;
+  padding: 0 20px;
 }
 
-form {
-  max-width: 400px;
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  height: 60px;
 }
 
-form div {
-  margin-bottom: 15px;
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
+nav ul li a {
+  color: white;
+  text-decoration: none;
 }
 
-input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+nav ul li a.router-link-active {
+  color: #3498db;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: white;
 }
 
 button {
-  padding: 10px 20px;
-  background-color: #007bff;
+  background: #e74c3c;
   color: white;
   border: none;
+  padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
-
-header {
-  padding: 20px;
-  border-bottom: 1px solid #141e27;
-}
-
 main {
   padding: 20px;
-  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 </style>
