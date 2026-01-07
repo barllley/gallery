@@ -1,105 +1,109 @@
 <template>
-  <div id="app" class="bg-white min-h-screen">
-    <Menubar :model="items" class="bg-white shadow-sm border-b">
-      <template #start>
-        <div class="flex items-center gap-3">
-          <img alt="logo" src="@/assets/logo_dark.svg"/>
-        </div>
-      </template>
+  <Menubar :model="items">
+    <template #start>
+      <span>
+        <img src="@/assets/logo_dark.svg" width="120" height="90" alt="My SVG Icon"/>
+      </span>
+    </template>
 
-      <template #item="{ item }">
-        <router-link
-          :to="item.route"
-          class="p-menuitem-link flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
-          :class="{
-            'bg-blue-50 text-blue-600': $route.path === item.route,
-            'text-gray-700 hover:bg-gray-100': $route.path !== item.route
-          }"
-        >
-          <span :class="item.icon" class="text-lg"></span>
-          <span class="font-medium">{{ item.label }}</span>
+    <template #item="{ item, props, hasSubmenu, root }">
+      <a class="flex items-center ml-6 p-4">
+        <router-link v-if="item.route" :to="item.route" class="flex items-center">
+          <span :class="item.icon"/>
+          <span class="ml-1">{{ item.label }}</span>
         </router-link>
-      </template>
+      </a>
+    </template>
 
-      <template #end>
-        <div class="flex items-center gap-4">
-          <div v-if="authStore.isAuthenticated && authStore.user" class="flex items-center gap-3">
-            <span class="pi pi-user text-gray-600"></span>
-            <span class="text-gray-800 font-medium">{{ authStore.user.name }}</span>
-            <Button
-              @click="logout"
-              label="Выйти"
-              text
-              class="text-gray-600 hover:text-gray-800"
-            />
-          </div>
-          <div v-else class="flex items-center gap-2">
+    <template #end>
+      <div class="flex items-center gap-1">
+        <div v-if="authStore.isAuthenticated && authStore.user">
+          <span class="pi pi-fw pi-user mr-4"/>
+          {{ authStore.user.name }}
+          <Button @click="logout" class="ml-4">Выйти</Button>
+        </div>
+        <div v-else>
+          <form @submit.prevent="login">
             <InputText
               v-model="email"
               type="email"
+              id="email"
+              required
               placeholder="Email"
-              class="w-40 border-gray-300"
+              class="w-40 mr-1"
+              :class="{'p-invalid': authStore.errorMessage}"
             />
             <InputText
               v-model="password"
               type="password"
+              id="password"
+              required
               placeholder="Пароль"
-              class="w-40 border-gray-300"
+              class="w-40 mr-1"
+              :class="{'p-invalid': authStore.errorMessage}"
             />
-            <Button
-              @click="login"
-              label="Войти"
-              class="bg-blue-600 border-blue-600 hover:bg-blue-700"
-            />
-            <small v-if="authStore.errorMessage" class="text-red-500 text-sm max-w-xs">
-              {{ authStore.errorMessage }}
-            </small>
-          </div>
+            <Button type="submit" class="mr-1">Войти</Button>
+            <div class="ml-2">
+              <small v-if="authStore.errorMessage" class="error">{{ authStore.errorMessage }}</small>
+            </div>
+          </form>
         </div>
-      </template>
-    </Menubar>
-
-    <main class="p-6 bg-gray-50 min-h-screen">
-      <router-view></router-view>
-    </main>
-  </div>
+      </div>
+    </template>
+  </Menubar>
+  <router-view></router-view>
 </template>
 
 <script>
 import { useAuthStore } from '@/stores/authStore'
-import Menubar from 'primevue/menubar'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
+import Button from "primevue/button"
+import Menubar from "primevue/menubar"
+import InputText from "primevue/inputtext"
 
 export default {
   name: 'App',
-  components: {
-    Menubar,
-    Button,
-    InputText
-  },
+  components: { Button, Menubar, InputText },
   data() {
     return {
       email: '',
       password: '',
       authStore: useAuthStore(),
-      items: [
+      baseItems: [
         {
           label: 'Главная',
-          icon: 'pi pi-home',
+          icon: 'pi pi-fw pi-home',
           route: '/'
         },
         {
           label: 'Выставки',
-          icon: 'pi pi-images',
+          icon: 'pi pi-fw pi-images',
           route: '/exhibitions'
         },
         {
           label: 'Билеты',
-          icon: 'pi pi-ticket',
+          icon: 'pi pi-fw pi-ticket',
           route: '/tickets'
+        },
+        {
+          label: 'Корзина',
+          icon: 'pi pi-fw pi-shopping-cart',
+          route: '/cart'
         }
       ]
+    }
+  },
+  computed: {
+    items() {
+      const items = [...this.baseItems]
+      if (this.authStore.isAuthenticated && this.authStore.user && this.authStore.user.is_admin) {
+        items.push({
+          label: 'Пользователи',
+          icon: 'pi pi-fw pi-users',
+          route: '/users'
+        })
+      }
+
+      return items
     }
   },
   async mounted() {
@@ -132,10 +136,62 @@ export default {
   border: none;
   border-bottom: 1px solid #e5e7eb;
   border-radius: 0;
-  padding: 0.5rem 1rem;
+  padding: 1rem 1rem;
 }
 
-.p-menuitem-link {
-  text-decoration: none;
+.error {
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+form .p-inputtext,
+form .p-button {
+  margin-right: 0.25rem;
+}
+
+/* Стили для увеличения расстояния между пунктами меню */
+.p-menubar .p-menubar-root-list {
+  display: flex;
+  gap: 1rem;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem {
+  margin: 0 0.75rem;
+}
+
+/* Адаптивные стили для формы */
+@media (max-width: 768px) {
+  .p-menubar .p-menubar-root-list {
+    gap: 0.5rem;
+  }
+
+  .p-menubar .p-menubar-root-list > .p-menuitem {
+    margin: 0 0.25rem;
+  }
+
+  form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .m-2 {
+    margin: 0.25rem 0;
+  }
+
+  .sm\\:w-auto {
+    width: 100% !important;
+  }
+
+  /* Уменьшаем логотип на мобильных */
+  img[alt="My SVG Icon"] {
+    width: 60px !important;
+    height: 60px !important;
+  }
 }
 </style>

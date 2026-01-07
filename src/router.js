@@ -3,6 +3,7 @@ import Home from './components/Home.vue';
 import Exhibitions from './components/Exhibitions.vue';
 import Tickets from './components/Tickets.vue';
 import Login from './components/Login.vue';
+import Users from './components/Users.vue';
 
 const routes = [
     {
@@ -20,6 +21,10 @@ const routes = [
     {
         path: '/login',
         component: Login,
+    },
+    {
+        path: '/users',
+        component: Users,
     },
 ];
 
