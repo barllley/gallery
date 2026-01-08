@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+// Добавляем строку с использованием переменной окружения
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000/api';
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     token: localStorage.getItem('token') || null,
-    isAuthenticated: false, // Начинаем с false
+    isAuthenticated: false,
     errorMessage: ''
   }),
 
@@ -14,8 +17,9 @@ export const useAuthStore = defineStore('auth', {
       try {
         this.errorMessage = '';
 
+        // Заменяем абсолютный URL на переменную окружения
         const response = await axios.post(
-          `http://localhost:8000/api/login`,
+          `${backendUrl}/login`, // Изменено здесь
           credentials,
           {
             headers: {
@@ -39,7 +43,7 @@ export const useAuthStore = defineStore('auth', {
         if (error.response && error.response.data) {
           this.errorMessage = error.response.data.message || 'Ошибка аутентификации';
         } else {
-          this.errorMessage = 'Сервер недоступен. Убедитесь, что бэкенд запущен на localhost:8000';
+          this.errorMessage = 'Сервер недоступен. Убедитесь, что бэкенд запущен';
         }
         return { success: false, error: this.errorMessage };
       }
@@ -48,8 +52,9 @@ export const useAuthStore = defineStore('auth', {
     async checkAuth() {
       if (this.token) {
         try {
+          // Заменяем абсолютный URL на переменную окружения
           const response = await axios.get(
-            `http://localhost:8000/api/user`,
+            `${backendUrl}/user`, // Изменено здесь
             {
               headers: {
                 'Authorization': `Bearer ${this.token}`,

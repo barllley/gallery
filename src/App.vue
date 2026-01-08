@@ -131,8 +131,9 @@ export default {
 </script>
 
 <style>
+
 .p-menubar {
-  background: white;
+  background: rgb(255, 255, 255);
   border: none;
   border-bottom: 1px solid #e5e7eb;
   border-radius: 0;
@@ -155,7 +156,7 @@ form .p-button {
   margin-right: 0.25rem;
 }
 
-/* Стили для увеличения расстояния между пунктами меню */
+/* увеличения расстояния между пунктами меню */
 .p-menubar .p-menubar-root-list {
   display: flex;
   gap: 1rem;
@@ -165,7 +166,110 @@ form .p-button {
   margin: 0 0.75rem;
 }
 
-/* Адаптивные стили для формы */
+.p-inputtext {
+  border: 1px solid #ced4da !important;
+  border-radius: 0.375rem !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  color: #495057 !important;
+  background-color: #fff !important;
+  background-clip: padding-box !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.p-inputtext:focus {
+  color: #495057 !important;
+  background-color: #fff !important;
+  border-color: #86b7fe !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.p-inputtext.p-invalid {
+  border-color: #dc3545 !important;
+}
+
+.p-inputtext.p-invalid:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.p-inputtext::placeholder {
+  color: #6c757d !important;
+  opacity: 1 !important;
+}
+
+.p-button {
+  color: #fff !important;
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  border: 1px solid transparent !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  border-radius: 0.375rem !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  vertical-align: middle !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+}
+
+.p-button:hover {
+  color: #fff !important;
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+}
+
+.p-button:focus {
+  color: #fff !important;
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5) !important;
+}
+
+.p-button:active {
+  color: #fff !important;
+  background-color: #0a58ca !important;
+  border-color: #0a53be !important;
+}
+
+/* Кнопка Выйти */
+.p-button.p-button-text {
+  color: #6c757d !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.p-button.p-button-text:hover {
+  color: #fff !important;
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+}
+
+/* Размеры полей */
+.w-40 {
+  width: 190px !important;
+}
+
+.error {
+  color: #dc3545 !important;
+  font-size: 0.875rem !important;
+  margin-top: 0.25rem !important;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* адаптивные стили для формы */
 @media (max-width: 768px) {
   .p-menubar .p-menubar-root-list {
     gap: 0.5rem;
@@ -178,20 +282,51 @@ form .p-button {
   form {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.5rem;
+    width: 100%;
   }
 
-  .m-2 {
-    margin: 0.25rem 0;
+  .p-inputtext,
+  .p-button {
+    width: 100% !important;
+    margin-right: 0 !important;
   }
 
-  .sm\\:w-auto {
+  .w-40 {
     width: 100% !important;
   }
 
-  /* Уменьшаем логотип на мобильных */
   img[alt="My SVG Icon"] {
     width: 60px !important;
     height: 60px !important;
   }
 }
+
+@media (max-width: 480px) {
+  .p-menubar {
+    padding: 0.5rem !important;
+  }
+
+  form {
+    gap: 0.25rem;
+  }
+}
+
+/* Стили для иконок в меню */
+.pi {
+  font-size: 1rem;
+}
+
+.pi-fw {
+  width: 1.5em;
+  text-align: center;
+}
+
+.ml-1 { margin-left: 0.25rem; }
+.ml-2 { margin-left: 0.5rem; }
+.ml-4 { margin-left: 1rem; }
+.ml-6 { margin-left: 1.5rem; }
+.mr-1 { margin-right: 0.25rem; }
+.mr-4 { margin-right: 1rem; }
+.p-4 { padding: 1rem; }
 </style>
