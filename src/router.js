@@ -4,6 +4,8 @@ import Exhibitions from './components/Exhibitions.vue';
 import Tickets from './components/Tickets.vue';
 import Login from './components/Login.vue';
 import Users from './components/Users.vue';
+import CreateExhibitions from './components/CreateExhibitions.vue';
+import Cart from './components/Cart.vue';
 
 const routes = [
     {
@@ -15,8 +17,16 @@ const routes = [
         component: Exhibitions,
     },
     {
+      path: '/CreateExhibitions',
+      component: CreateExhibitions,
+    },
+    {
         path: '/tickets',
         component: Tickets,
+    },
+    {
+        path: '/cart',
+        component: Cart,
     },
     {
         path: '/login',

@@ -84,6 +84,56 @@ export const useDataStore = defineStore('data', {
             }
         },
 
+        async create_new_exhibition(formData) {
+          this.loading = true
+          this.errorMessage = ''
+          this.uploadProgress = 0
+
+          try {
+            // получаем токен из localStorage
+            const token = localStorage.getItem('token')
+
+            if (!token) {
+              throw new Error('Требуется авторизация')
+            }
+
+            const response = await axios.post(`${backendUrl}/exhibitions`, formData, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+                'Client-ID': 'TestClient',
+                'Client-Secret': 'test_secret'
+              },
+              onUploadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                  this.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                }
+              }
+            })
+
+            // Добавляем новую выставку в начало списка
+            if (response.data.data) {
+              this.exhibitions = [response.data.data, ...this.exhibitions]
+              this.exhibitions_total += 1
+            }
+
+            return {
+              success: true,
+              data: response.data
+            }
+
+          } catch (error) {
+            this.handleError(error)
+            return {
+              success: false,
+              error: this.errorMessage
+            }
+          } finally {
+            this.loading = false
+            this.uploadProgress = 0
+          }
+        },
+
         async get_tickets_total() {
             this.errorMessage = "";
             try {
