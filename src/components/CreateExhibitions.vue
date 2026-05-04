@@ -230,7 +230,7 @@ const submitForm = async () => {
       throw new Error('Требуется авторизация')
     }
 
-    const response = await fetch('http://localhost:8000/api/exhibitions', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/exhibitions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

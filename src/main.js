@@ -35,3 +35,4 @@ app.component('Button', Button)
 app.component('FileUpload', FileUpload)
 
 app.mount('#app')
+

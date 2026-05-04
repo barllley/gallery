@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 // Добавляем строку с использованием переменной окружения
-const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000/api';
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://satura-gallery.ru/api';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
